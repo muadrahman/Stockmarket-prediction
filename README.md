@@ -83,4 +83,4 @@ For inquiries or feedback, feel free to reach out:
 
 ## Project Link
 
-For further details and access to the project repository, visit [this link]([https://github.com/muadrahman/Stockmarket-predictionS](https://github.com/muadrahman/Stockmarket-prediction)).
+For further details and access to the project repository, visit [this link](https://github.com/muadrahman/Stockmarket-prediction).
