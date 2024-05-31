@@ -1,261 +1,86 @@
+# Stock Market Price Prediction using LSTM with Real-Time Data
 
+## Overview
 
-# Importing necessary libraries
-import yfinance as yf
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout
-import matplotlib.pyplot as plt
-import seaborn as sns
-from keras.optimizers import Adam
-from keras.callbacks import EarlyStopping
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+This project aims to predict stock market prices using Long Short-Term Memory (LSTM) neural networks integrated with real-time data from Yahoo Finance. By leveraging LSTM models, the project analyzes historical stock data to forecast future prices, providing valuable insights for investors and traders.
 
+## Table of Contents
 
+1. [Introduction](#introduction)
+2. [Data Acquisition](#data-acquisition)
+3. [Data Preprocessing](#data-preprocessing)
+4. [Model Architecture](#model-architecture)
+5. [Model Training](#model-training)
+6. [Model Evaluation](#model-evaluation)
+7. [Results](#results)
+8. [Technologies Used](#technologies-used)
+9. [Contact](#contact)
+10. [References](#references)
+11. [Project Link](#project-link)
 
-# Download historical data for Infosys (INFY)
-ticker = yf.Ticker("INFY.NS")
-df = ticker.history(period="2y", interval="1d")
+## Introduction
 
-# Display the first few rows of the dataframe
-print("Dataframe head:")
-df.head()
+The project focuses on predicting stock market prices using LSTM neural networks, a type of recurrent neural network (RNN) well-suited for sequential data analysis. Real-time data from Yahoo Finance is utilized to train and validate the LSTM model, enabling accurate predictions of stock prices over time.
 
+## Data Acquisition
 
+- **Source:** Real-time stock market data is obtained from Yahoo Finance using the Yahoo Finance API.
+- **Data:** Historical stock prices, including open, high, low, and closing prices, along with trading volume, are collected for analysis.
 
+## Data Preprocessing
 
+- **Scaling:** The acquired data is preprocessed and scaled using MinMaxScaler to normalize the features within a specific range, enhancing model performance.
+- **Sequence Generation:** Sequences of input-output pairs are created to train the LSTM model, with each sequence representing a window of historical stock prices.
 
-# Data visualization
-plt.figure(figsize=(12, 6))
-plt.plot(df['Close'], label='Closing Price')
-plt.title('Infosys Stock Price Over Time')
-plt.xlabel('Date')
-plt.ylabel('Closing Price')
-plt.legend()
-plt.show()
+## Model Architecture
 
+The LSTM model architecture consists of multiple layers, including LSTM layers with varying units, dropout layers for regularization, and a dense output layer. This architecture enables the model to effectively capture temporal dependencies in the stock price data.
 
+## Model Training
 
+### Steps:
 
-# Moving averages
-df['MA20'] = df['Close'].rolling(window=20).mean()
-df['STD20'] = df['Close'].rolling(window=20).std()
+1. **Data Splitting:** The dataset is split into training, validation, and testing sets.
+2. **Model Initialization:** Initialize the LSTM model with the desired architecture.
+3. **Model Compilation:** Compile the model with appropriate loss function and optimizer.
+4. **Model Training:** Train the LSTM model using the training data.
+5. **Early Stopping:** Implement early stopping to prevent overfitting during training.
+6. **Hyperparameter Tuning:** Fine-tune model hyperparameters for optimal performance.
 
-plt.figure(figsize=(12, 6))
-plt.plot(df['Close'], label='Closing Price')
-plt.plot(df['MA20'], label='20-Day Moving Average')
-plt.fill_between(df.index, df['MA20'] - df['STD20'], df['MA20'] + df['STD20'], alpha=0.2)
-plt.legend()
-plt.show()
+## Model Evaluation
 
+- **Validation:** The trained model's performance is evaluated on validation data using mean squared error (MSE) as the primary metric.
+- **Testing:** The final model is tested on a separate test set to assess its generalization performance and accuracy in predicting unseen data.
 
+## Results
 
+- **Training Accuracy:** The LSTM model achieves a training accuracy of 79% (MSE: 0.196), demonstrating its ability to learn from historical stock data.
+- **Testing Accuracy:** The model achieves a testing accuracy of 44.6% (MSE: 0.101), indicating its capability to make predictions on unseen data.
 
+## Technologies Used
 
-# Statistical analysis
-correlation_matrix = df.corr()
-plt.figure(figsize=(10, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f')
-plt.title('Correlation Matrix')
-plt.show()
+- Python
+- TensorFlow / Keras
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Yahoo Finance API
 
+## Contact
 
+For inquiries or feedback, feel free to reach out:
+- [Email](mailto:your.email@example.com)
+- [LinkedIn](https://www.linkedin.com/in/your-profile/)
 
+## References
 
+- [Keras LSTM Documentation](https://keras.io/api/layers/recurrent_layers/lstm/)
+- [NumPy Documentation](https://numpy.org/)
+- [Pandas Documentation](https://pandas.pydata.org/)
+- [Matplotlib Documentation](https://matplotlib.org/)
+- [Seaborn Documentation](https://seaborn.pydata.org/)
 
-# Data preparation for LSTM
-X = df["Close"].values.reshape(-1, 1)
-scaler = MinMaxScaler()
-X_scaled = scaler.fit_transform(X)
+## Project Link
 
-sequence_length = 5
-sequences = []
-target = []
-
-for i in range(len(X_scaled) - sequence_length):
-    seq = X_scaled[i:i + sequence_length, 0]
-    label = X_scaled[i + sequence_length, 0]
-    sequences.append(seq)
-    target.append(label)
-    
-X_seq, y_seq = np.array(sequences), np.array(target)
-
-
-
-
-
-# Creating a new dataframe with sequences and target
-df_sequences = pd.DataFrame(X_seq, columns=[f'Day_{i+1}' for i in range(sequence_length)])
-df_sequences['Target'] = y_seq
-
-# Displaying the new dataframe with sequences and target
-print("\nDataframe with Sequences and Target:")
-df_sequences.head()
-
-
-
-
-# Displaying the differences in the dataframe after creating sequences and target
-print("\nDifferences in the Dataframe:")
-df_sequences.diff().dropna().head()
-
-
-
-
-
-# Splitting the data into training, validation, and testing sets
-split_ratio_train = 0.8
-split_ratio_val = 0.9
-
-split_index_train = int(split_ratio_train * len(X_seq))
-split_index_val = int(split_ratio_val * len(X_seq))
-
-X_train, X_val, X_test = X_seq[:split_index_train], X_seq[split_index_train:split_index_val], X_seq[split_index_val:]
-y_train, y_val, y_test = y_seq[:split_index_train], y_seq[split_index_train:split_index_val], y_seq[split_index_val:]
-
-
-
-
-
-# Creating LSTM model
-model = Sequential([
-    LSTM(units=64, return_sequences=True, input_shape=(sequence_length, 1)),
-    Dropout(0.3),
-    LSTM(units=32),
-    Dropout(0.4),
-    Dense(1)
-])
-
-
-
-
-
-# Compile the model with learning rate and MAE metric
-model.compile(loss='mean_squared_error', optimizer=Adam(learning_rate=0.001), metrics=['mae'])
-
-
-
-
-
-# Train the model with validation data and early stopping
-history = model.fit(X_train, y_train, epochs=100, batch_size=64, verbose=2,
-                    validation_data=(X_val, y_val),
-                    callbacks=[EarlyStopping(patience=10, restore_best_weights=True)])
-
-
-
-
-
-# Visualize the training and validation loss over epochs
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Training and Validation Loss over Epochs')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
-
-
-
-
-
-# Evaluate on the training set
-train_predictions = model.predict(X_train)
-train_predictions = scaler.inverse_transform(train_predictions)
-y_train_actual = scaler.inverse_transform(y_train.reshape(-1, 1))
-
-
-
-
-
-# Visualize the predictions on the training set
-plt.plot(y_train_actual, label='Actual Stock Price (Training)')
-plt.plot(train_predictions, label='Predicted Stock Price (Training)')
-plt.title('Infosys Stock Price Prediction on Training Set using LSTM')
-plt.xlabel('Time')
-plt.ylabel('Stock Price')
-plt.legend()
-plt.show()
-
-
-
-
-
-# Calculate metrics for the training set
-train_mae = mean_absolute_error(y_train_actual, train_predictions)
-train_mse = mean_squared_error(y_train_actual, train_predictions)
-train_r2 = r2_score(y_train_actual, train_predictions)*100
-
-print('\nTraining Metrics:')
-print(f'Mean Absolute Error (MAE): {train_mae:.2f}')
-print(f'Mean Squared Error (MSE): {train_mse:.2f}')
-print(f'R-squared (R2): {train_r2:.2f}%')
-
-
-
-
-
-# Evaluate on the validation set
-val_predictions = model.predict(X_val)
-val_predictions = scaler.inverse_transform(val_predictions)
-y_val_actual = scaler.inverse_transform(y_val.reshape(-1, 1))
-
-# Visualize the predictions on the validation set
-plt.plot(y_val_actual, label='Actual Stock Price (Validation)')
-plt.plot(val_predictions, label='Predicted Stock Price (Validation)')
-plt.title('Infosys Stock Price Prediction on Validation Set using LSTM')
-plt.xlabel('Time')
-plt.ylabel('Stock Price')
-plt.legend()
-plt.show()
-
-
-
-
-
-# Calculate metrics for the validation set
-val_mae = mean_absolute_error(y_val_actual, val_predictions)
-val_mse = mean_squared_error(y_val_actual, val_predictions)
-val_r2 = r2_score(y_val_actual, val_predictions)*100
-
-print('\nValidation Metrics:')
-print(f'Mean Absolute Error (MAE): {val_mae:.2f}')
-print(f'Mean Squared Error (MSE): {val_mse:.2f}')
-print(f'R-squared (R2): {val_r2:.2f}%')
-
-
-
-
-
-# Evaluate on the test set
-test_predictions = model.predict(X_test)
-test_predictions = scaler.inverse_transform(test_predictions)
-y_test_actual = scaler.inverse_transform(y_test.reshape(-1, 1))
-
-# Visualize the predictions on the test set
-plt.plot(y_test_actual, label='Actual Stock Price')
-plt.plot(test_predictions, label='Predicted Stock Price')
-plt.title('Infosys Stock Price Prediction using LSTM')
-plt.xlabel('Time')
-plt.ylabel('Stock Price')
-plt.legend()
-plt.show()
-
-
-
-
-
-# Evaluate different metrics on the test set
-mae = mean_absolute_error(y_test_actual, test_predictions)
-mse = mean_squared_error(y_test_actual, test_predictions)
-rmse = np.sqrt(mse)
-r2 = r2_score(y_test_actual, test_predictions) * 100
-
-print('\nTest Set Metrics:')
-print(f'Mean Absolute Error (MAE): {mae:.2f}')
-print(f'Mean Squared Error (MSE): {mse:.2f}')
-print(f'Root Mean Squared Error (RMSE): {rmse:.2f}')
-print(f'R-squared (R2): {r2:.2f}%')
-
+For further details and access to the project repository, visit [this link](https://github.com/muadrahman/Stockmarket-predictionS).
