@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project aims to predict stock market prices using Long Short-Term Memory (LSTM) neural networks integrated with real-time data from Yahoo Finance. By leveraging LSTM models, the project analyzes historical stock data to forecast future prices, providing valuable insights for investors and traders.
+This project utilizes Long Short-Term Memory (LSTM) neural networks to predict stock market prices, integrating real-time data from Yahoo Finance. By leveraging LSTM models, the project aims to analyze historical stock data to forecast future prices, providing valuable insights for investors and traders.
 
 ## Table of Contents
 
@@ -20,7 +20,7 @@ This project aims to predict stock market prices using Long Short-Term Memory (L
 
 ## Introduction
 
-The project focuses on predicting stock market prices using LSTM neural networks, a type of recurrent neural network (RNN) well-suited for sequential data analysis. Real-time data from Yahoo Finance is utilized to train and validate the LSTM model, enabling accurate predictions of stock prices over time.
+This project focuses on predicting stock market prices using LSTM neural networks, a type of recurrent neural network (RNN) well-suited for sequential data analysis. Real-time data from Yahoo Finance is utilized to train and validate the LSTM model, enabling accurate predictions of stock prices over time.
 
 ## Data Acquisition
 
