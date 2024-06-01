@@ -67,11 +67,11 @@ The LSTM model architecture consists of multiple layers, including LSTM layers w
 - Seaborn
 - Yahoo Finance API
 
-## Contact
+## Contact Information
 
-For inquiries or feedback, feel free to reach out:
-- [Email](mailto:your.email@example.com)
-- [LinkedIn](https://www.linkedin.com/in/your-profile/)
+For inquiries, feedback, or support, please feel free to reach out to:
+- **Email:** [mr.muadrahman@gmail.com](mailto:mr.muadrahman@gmail.com)
+- **LinkedIn:** [Muad Rahman](https://www.linkedin.com/in/muadrahman/)
 
 ## References
 
